@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { adminFetch } from "@/lib/adminApi";
+import { formatPrice } from "@/lib/format";
 
 const TYPES = ["Apartment", "Villa", "Commercial"];
 const STATUSES = ["Upcoming", "Under Construction", "Ready"];
@@ -201,7 +202,12 @@ export default function ProjectForm({ project }) {
           ))}
         </select>
       </Field>
-      {textInput("startingPrice", "Starting price (in rupees)", { inputMode: "numeric", placeholder: "e.g. 38500000" })}
+      <div>
+        {textInput("startingPrice", "Starting price (in rupees)", { inputMode: "numeric", placeholder: "e.g. 38500000" })}
+        {values.startingPrice !== "" && Number(values.startingPrice) >= 0 && !errors.startingPrice && (
+          <p className="mt-2 text-[13px] text-muted">Will show on the site as {formatPrice(Number(values.startingPrice))}</p>
+        )}
+      </div>
       {textInput("configuration", "Configuration", { placeholder: "e.g. 3 and 4 BHK" })}
 
       <div className="md:col-span-2">
@@ -219,18 +225,18 @@ export default function ProjectForm({ project }) {
 
       <div className="flex flex-wrap gap-8 md:col-span-2">
         <label className="flex items-center gap-3 text-[14px]">
-          <input type="checkbox" name="featured" checked={values.featured} onChange={change} className="h-4 w-4 accent-white" />
+          <input type="checkbox" name="featured" checked={values.featured} onChange={change} className="h-4 w-4 accent-fg" />
           Featured on homepage
         </label>
         <label className="flex items-center gap-3 text-[14px]">
-          <input type="checkbox" name="published" checked={values.published} onChange={change} className="h-4 w-4 accent-white" />
+          <input type="checkbox" name="published" checked={values.published} onChange={change} className="h-4 w-4 accent-fg" />
           Published (visible on the website)
         </label>
       </div>
 
       <div>
         <Field label={isEdit ? "Replace cover image (optional)" : "Cover image"} error={errors.coverImage}>
-          <input type="file" accept="image/jpeg,image/png,image/webp" onChange={pickCover} className="mt-3 block w-full text-[13px] text-muted file:mr-4 file:cursor-pointer file:border-0 file:bg-button file:px-4 file:py-2 file:text-white" />
+          <input type="file" accept="image/jpeg,image/png,image/webp" onChange={pickCover} className="mt-3 block w-full text-[13px] text-muted file:mr-4 file:cursor-pointer file:border-0 file:bg-button file:px-4 file:py-2 file:text-fg" />
         </Field>
         {(coverPreview || (isEdit && project.coverImage)) && (
           // eslint-disable-next-line @next/next/no-img-element
@@ -240,7 +246,7 @@ export default function ProjectForm({ project }) {
 
       <div>
         <Field label="Add gallery images (max 6 in total)" error={errors.gallery}>
-          <input type="file" multiple accept="image/jpeg,image/png,image/webp" onChange={pickGallery} className="mt-3 block w-full text-[13px] text-muted file:mr-4 file:cursor-pointer file:border-0 file:bg-button file:px-4 file:py-2 file:text-white" />
+          <input type="file" multiple accept="image/jpeg,image/png,image/webp" onChange={pickGallery} className="mt-3 block w-full text-[13px] text-muted file:mr-4 file:cursor-pointer file:border-0 file:bg-button file:px-4 file:py-2 file:text-fg" />
         </Field>
         <div className="mt-4 flex flex-wrap gap-3">
           {gallery.map((image) => (
@@ -251,7 +257,7 @@ export default function ProjectForm({ project }) {
                 type="button"
                 onClick={() => removeSaved(image)}
                 aria-label="Remove image"
-                className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center bg-black/70 text-[14px] hover:bg-black"
+                className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center bg-black/75 text-[14px] text-white hover:bg-black"
               >
                 ×
               </button>

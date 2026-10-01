@@ -35,7 +35,7 @@ export default function AdminLogin() {
 
   return (
     <div className="flex min-h-screen items-center justify-center px-5">
-      <form onSubmit={submit} noValidate className="w-full max-w-[420px] bg-surface p-8 md:p-10">
+      <form onSubmit={submit} noValidate className="w-full max-w-[420px] bg-surface p-8 shadow-sm md:p-10">
         <p className="eyebrow">ADTRIC Admin</p>
         <h1 className="heading mt-3 text-[34px]">Sign in</h1>
 
@@ -66,7 +66,7 @@ export default function AdminLogin() {
               onClick={() => setShow((value) => !value)}
               aria-label={show ? "Hide password" : "Show password"}
               aria-pressed={show}
-              className="absolute right-0 top-1/2 -translate-y-1/2 p-1 text-muted hover:text-white"
+              className="absolute right-0 top-1/2 -translate-y-1/2 p-1 text-muted hover:text-fg"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" />

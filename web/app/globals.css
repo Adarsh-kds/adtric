@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
-@theme inline {
+@theme {
+  --color-fg: #ffffff;
   --color-bg: #1f1f21;
   --color-surface: #303030;
   --color-button: #48484c;
@@ -9,6 +10,9 @@
   --color-muted: #c9c9cc;
   --color-error: #ff9d94;
   --color-ok: #a8e6b8;
+}
+
+@theme inline {
   --font-sans: var(--font-outfit);
   --font-serif: var(--font-newsreader);
 }
@@ -65,7 +69,7 @@ body {
 
 .btn-gray {
   background: var(--color-button);
-  color: #ffffff;
+  color: var(--color-fg);
 }
 
 .btn-gray:hover:not(:disabled) {
@@ -73,12 +77,13 @@ body {
 }
 
 .btn-white {
-  background: #ffffff;
-  color: #1f1f21;
+  background: var(--color-fg);
+  color: var(--color-bg);
 }
 
 .btn-white:hover:not(:disabled) {
-  background: #e4e4e7;
+  background: var(--color-fg);
+  opacity: 0.88;
 }
 
 .field-label {
@@ -86,13 +91,13 @@ body {
   font-size: 12px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #ffffff;
+  color: var(--color-fg);
 }
 
 .field-input {
   width: 100%;
   background: transparent;
-  color: #ffffff;
+  color: var(--color-fg);
   border: 0;
   border-bottom: 1px solid var(--color-line);
   border-radius: 0;
@@ -103,7 +108,7 @@ body {
 }
 
 .field-input:focus {
-  border-bottom-color: #ffffff;
+  border-bottom-color: var(--color-fg);
 }
 
 .field-input[aria-invalid="true"] {
@@ -111,11 +116,12 @@ body {
 }
 
 .field-input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--color-muted);
+  opacity: 0.7;
 }
 
 .field-input:-webkit-autofill {
-  -webkit-text-fill-color: #ffffff;
+  -webkit-text-fill-color: var(--color-fg);
   transition: background-color 9999s ease-in-out 0s;
 }
 
@@ -128,12 +134,39 @@ select.field-input {
 }
 
 select.field-input option {
-  background: #303030;
-  color: #ffffff;
+  background: var(--color-surface);
+  color: var(--color-fg);
 }
 
 .field-error {
   margin-top: 0.4rem;
   font-size: 13px;
   color: var(--color-error);
+}
+
+/* Admin light theme: only the colour tokens change. */
+.admin-root[data-theme="light"] {
+  --color-fg: #1f1f21;
+  --color-bg: #f4f4f1;
+  --color-surface: #ffffff;
+  --color-button: #e3e3df;
+  --color-button-hover: #d3d3ce;
+  --color-line: #8d8d90;
+  --color-muted: #5b5b60;
+  --color-error: #b3261e;
+  --color-ok: #1b7a3a;
+  color-scheme: light;
+}
+
+.admin-root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+.admin-root {
+  background: var(--color-bg);
+  color: var(--color-fg);
+}
+
+.admin-root[data-theme="light"] select.field-input {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='%231f1f21' stroke-width='1.2'%3E%3Cpath d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E");
 }

@@ -52,8 +52,8 @@ export default function AdminProjects() {
       {data && data.data.length === 0 && <p className="text-muted">No projects yet.</p>}
 
       {data && data.data.length > 0 && (
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[760px] text-left text-[14px]">
+        <div className="hidden md:block">
+          <table className="w-full text-left text-[14px]">
             <thead className="eyebrow border-b border-line/50">
               <tr>
                 <th className="py-3 pr-4 font-normal">Project</th>
@@ -78,7 +78,7 @@ export default function AdminProjects() {
                   <td className="py-4 pr-4">{project.propertyType}</td>
                   <td className="py-4 pr-4">{formatPrice(project.startingPrice)}</td>
                   <td className="py-4 pr-4 text-[12px] uppercase tracking-[0.1em]">
-                    {project.featured && <span className="mr-2 bg-white px-2 py-1 text-bg">Featured</span>}
+                    {project.featured && <span className="mr-2 bg-fg px-2 py-1 text-bg">Featured</span>}
                     {!project.published && <span className="bg-button px-2 py-1">Hidden</span>}
                   </td>
                   <td className="py-4 text-right">
@@ -100,6 +100,43 @@ export default function AdminProjects() {
             </tbody>
           </table>
         </div>
+      )}
+
+      {data && data.data.length > 0 && (
+        <ul className="md:hidden">
+          {data.data.map((project) => (
+            <li key={project._id} className="border-b border-line/30 py-5">
+              <div className="flex gap-4">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={project.coverImage} alt="" className="h-16 w-20 shrink-0 object-cover" />
+                <div className="min-w-0">
+                  <p className="text-[16px]">{project.name}</p>
+                  <p className="mt-1 text-[13px] text-muted">
+                    {project.location} · {project.propertyType} · {formatPrice(project.startingPrice)}
+                  </p>
+                  <p className="mt-2 flex flex-wrap gap-2 text-[11px] uppercase tracking-[0.1em]">
+                    {project.featured && <span className="bg-fg px-2 py-1 text-bg">Featured</span>}
+                    {!project.published && <span className="bg-button px-2 py-1">Hidden</span>}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 flex items-center gap-6 text-[14px]">
+                {confirmId === project._id ? (
+                  <>
+                    <span className="text-muted">Delete this project?</span>
+                    <button className="text-error underline" onClick={() => remove(project._id)}>Yes</button>
+                    <button className="underline" onClick={() => setConfirmId("")}>No</button>
+                  </>
+                ) : (
+                  <>
+                    <Link href={`/admin/projects/${project._id}/edit`} className="underline">Edit</Link>
+                    <button className="text-error underline" onClick={() => setConfirmId(project._id)}>Delete</button>
+                  </>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
       )}
 
       {data && <AdminPager page={data.page} totalPages={data.totalPages} onChange={setPage} />}

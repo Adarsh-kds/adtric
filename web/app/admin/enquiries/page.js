@@ -66,7 +66,7 @@ export default function AdminEnquiries() {
           <h1 className="heading text-[36px]">Enquiries</h1>
           {data && <p className="mt-1 text-muted">{data.total} in total</p>}
         </div>
-        <div className="w-full max-w-[280px]">
+        <div className="w-full md:max-w-[280px]">
           <label htmlFor="project-filter" className="field-label">Project</label>
           <select
             id="project-filter"
@@ -90,8 +90,8 @@ export default function AdminEnquiries() {
       {data && data.data.length === 0 && <p className="text-muted">No enquiries found.</p>}
 
       {data && data.data.length > 0 && (
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[900px] text-left text-[14px]">
+        <div className="hidden md:block">
+          <table className="w-full text-left text-[14px]">
             <thead className="eyebrow border-b border-line/50">
               <tr>
                 <th className="py-3 pr-4 font-normal">Received</th>
@@ -144,6 +144,53 @@ export default function AdminEnquiries() {
             </tbody>
           </table>
         </div>
+      )}
+
+      {data && data.data.length > 0 && (
+        <ul className="md:hidden">
+          {data.data.map((row) => (
+            <li key={row._id} className="border-b border-line/30 py-5">
+              <div className="flex items-start justify-between gap-3">
+                <p className="text-[16px]">{row.name}</p>
+                <p className="text-right text-[12px] text-muted">{formatDate(row.createdAt)}</p>
+              </div>
+              <p className="mt-1 text-[14px]">{row.mobile}</p>
+              {row.email && <p className="text-[14px] text-muted">{row.email}</p>}
+              <p className="mt-3 text-[13px] text-muted">
+                For: <span className="text-fg">{row.project ? row.project.name : "Deleted project"}</span>
+              </p>
+              {row.message && <p className="mt-2 text-[14px] text-muted">{row.message}</p>}
+              <div className="mt-4 grid grid-cols-2 items-end gap-4">
+                <div>
+                  <label className="eyebrow">Status</label>
+                  <select
+                    value={row.status}
+                    disabled={busyId === row._id}
+                    onChange={(event) => changeStatus(row._id, event.target.value)}
+                    className="field-input !py-1"
+                    aria-label="Enquiry status"
+                  >
+                    {STATUSES.map((item) => (
+                      <option key={item}>{item}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex items-center gap-3">
+                  {row.crmStatus === "Sent" ? (
+                    <span className="bg-ok/20 px-2 py-1 text-[12px] uppercase tracking-[0.1em] text-ok">CRM sent</span>
+                  ) : (
+                    <>
+                      <span className="bg-error/20 px-2 py-1 text-[12px] uppercase tracking-[0.1em] text-error">CRM failed</span>
+                      <button disabled={busyId === row._id} onClick={() => retry(row._id)} className="underline disabled:opacity-50">
+                        Retry
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
       )}
 
       {data && <AdminPager page={data.page} totalPages={data.totalPages} onChange={setPage} />}
