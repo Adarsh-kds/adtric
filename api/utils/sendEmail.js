@@ -6,6 +6,7 @@ const sendEmail = async (enquiry, projectName) => {
       process.env;
 
     if (!SMTP_SERVER || !SMTP_LOGIN || !SMTP_KEY || !MAIL_TO) {
+      console.log("Email alert skipped: SMTP configuration is incomplete.");
       return;
     }
 

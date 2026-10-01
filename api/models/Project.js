@@ -41,6 +41,7 @@ const projectSchema = new mongoose.Schema(
       type: Number,
       required: [true, "Starting price is required"],
       min: [0, "Starting price cannot be negative"],
+      cast: "Starting price must be a number",
     },
     configuration: {
       type: String,
