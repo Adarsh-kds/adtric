@@ -15,6 +15,10 @@ const errorHandler = (err, req, res, next) => {
       .json({ success: false, message: "Validation failed", errors });
   }
 
+  if (err.type === "entity.parse.failed") {
+    return res.status(400).json({ success: false, message: "Invalid JSON body" });
+  }
+
   if (err.name === "CastError") {
     return res.status(400).json({ success: false, message: "Invalid id" });
   }
