@@ -1,6 +1,7 @@
 import { Newsreader, Outfit } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ChromeGate from "@/components/ChromeGate";
 import { SITE } from "@/lib/site";
 import "./globals.css";
 
@@ -30,9 +31,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${newsreader.variable} ${outfit.variable}`}>
       <body className="flex min-h-screen flex-col">
-        <Header />
+        <ChromeGate>
+          <Header />
+        </ChromeGate>
         <main className="flex-1">{children}</main>
-        <Footer />
+        <ChromeGate>
+          <Footer />
+        </ChromeGate>
       </body>
     </html>
   );
