@@ -4,8 +4,6 @@ node_modules/
 .env.*
 !.env.example
 uploads/*
-!uploads/.gitkeep
-claude-code-prompt.md
-TASK_*.pdf
 .DS_Store
-/others
+
+_private/
