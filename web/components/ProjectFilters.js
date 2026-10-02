@@ -57,7 +57,7 @@ export default function ProjectFilters({ locations }) {
   const hasFilters = FILTER_KEYS.some((key) => values[key]);
 
   return (
-    <div className="border border-white/10 bg-surface/60 p-5 sm:p-6">
+    <div className="glass p-5 sm:p-6">
       <div className="grid gap-x-6 gap-y-6 sm:grid-cols-2 lg:grid-cols-5">
         <div>
           <label htmlFor="filter-location" className="field-label">

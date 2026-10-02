@@ -40,7 +40,7 @@ api/
   middleware/    auth, upload, rate limits, error handler
   models/        Project, Enquiry, Admin
   routes/        public, enquiry and admin routes
-  seed/          seed scripts + placeholder images
+  seed/          seed scripts + the pictures used by the seed
   utils/         R2 upload, CRM push, email, slug helper
   server.js
 web/
@@ -60,7 +60,8 @@ cd api
 npm install
 cp .env.example .env     # then fill in the values (see below)
 npm run seed:admin       # creates the admin user
-npm run seed:projects    # 8 sample projects (4 featured), images uploaded to R2
+npm run seed:projects    # 6 real projects (all featured); uploads the pictures in seed/images/ to R2
+npm run seed:images       # one-time: saves the 6 projects' pictures into seed/images/ (already done if the folders exist)
 npm run dev              # http://localhost:5000
 ```
 
@@ -91,7 +92,7 @@ Open `/`, `/projects`, `/projects/palm-crest-residences` and `/admin/login`.
 | `MAIL_FROM`, `MAIL_TO` | Sender (must be verified with the SMTP provider) and receiver of alerts |
 | `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET` | Cloudflare R2 credentials |
 | `R2_PUBLIC_BASE_URL` | Public base URL of the bucket, no trailing slash |
-| `R2_KEY_PREFIX` | Folder inside the bucket: `adtric/local` for development, `adtric/prod` for production |
+| `R2_KEY_PREFIX` | Folder inside the bucket: `adtric/local`. This demo uses the same folder for local and production, so both show the same images (a real production setup would use a separate folder such as `adtric/prod`) |
 
 ### web/.env.local
 
@@ -106,7 +107,7 @@ Open `/`, `/projects`, `/projects/palm-crest-residences` and `/admin/login`.
 ## Seed scripts
 
 - `npm run seed:admin` - creates the admin, or resets its password if it already exists.
-- `npm run seed:projects` - **deletes all projects** and inserts 8 sample projects with images uploaded to R2. Run it once on an empty database, not on a database that already has real data.
+- `npm run seed:projects` - **deletes all projects** and inserts 6 projects, uploading their pictures from `api/seed/images/<project>/` to R2 (`cover.*` is the cover, `gallery-N.*` the gallery). The seed does not depend on old R2 files. Run it once on an empty database, not on a database that already has real data.
 
 ## API reference
 

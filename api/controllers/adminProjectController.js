@@ -35,6 +35,18 @@ const pickFields = (body) => {
   return fields;
 };
 
+// Accepts a JSON array string or a repeated form field.
+const toList = (value) => {
+  if (Array.isArray(value)) return value.filter((item) => typeof item === "string");
+  if (typeof value !== "string" || !value) return [];
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed.filter((item) => typeof item === "string") : [];
+  } catch {
+    return [value];
+  }
+};
+
 const removeFiles = async (urls) => {
   for (const url of urls) {
     try {
@@ -153,7 +165,15 @@ const updateProject = async (req, res, next) => {
     }
     project.set(fields);
 
+    // Gallery images the admin removed in the form; applied only when saving.
+    const toRemove = toList(req.body.removeGallery).filter((image) =>
+      project.gallery.includes(image)
+    );
+
     const errors = await getValidationErrors(project);
+    if (project.gallery.length - toRemove.length + galleryFiles.length > 6) {
+      errors.gallery = "A property can have at most 6 gallery images";
+    }
     if (Object.keys(errors).length > 0) {
       return res
         .status(400)
@@ -172,6 +192,7 @@ const updateProject = async (req, res, next) => {
         uploaded.push(url);
         project.gallery.push(url);
       }
+      project.gallery = project.gallery.filter((image) => !toRemove.includes(image));
 
       await project.save();
     } catch (error) {
@@ -179,9 +200,11 @@ const updateProject = async (req, res, next) => {
       throw error;
     }
 
+    // Delete old files only after the changes are saved.
     if (coverFile) {
       await removeFiles([oldCover]);
     }
+    await removeFiles(toRemove);
 
     res.status(200).json({ success: true, data: project });
   } catch (error) {

@@ -9,15 +9,27 @@ export const getToken = () => {
   }
 };
 
-export const setToken = (token) => {
+const EMAIL_KEY = "adtric_admin_email";
+
+export const setToken = (token, email = "") => {
   try {
     localStorage.setItem(TOKEN_KEY, token);
+    localStorage.setItem(EMAIL_KEY, email);
   } catch {}
+};
+
+export const getEmail = () => {
+  try {
+    return localStorage.getItem(EMAIL_KEY) || "";
+  } catch {
+    return "";
+  }
 };
 
 export const clearToken = () => {
   try {
     localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(EMAIL_KEY);
   } catch {}
 };
 

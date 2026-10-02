@@ -25,6 +25,12 @@ export default function Footer() {
             <Link href="/#enquiry" className="block text-white/90 hover:text-white">
               Enquire
             </Link>
+            <a href={SITE.phoneLink} className="block text-white/90 hover:text-white">
+              Call {SITE.phone}
+            </a>
+            <a href={SITE.whatsappLink} className="block text-white/90 hover:text-white">
+              WhatsApp us
+            </a>
           </nav>
         </div>
 

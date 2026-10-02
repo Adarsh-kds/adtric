@@ -2,6 +2,7 @@ import { Newsreader, Outfit } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ChromeGate from "@/components/ChromeGate";
+import FloatingActions from "@/components/FloatingActions";
 import { SITE } from "@/lib/site";
 import "./globals.css";
 
@@ -37,6 +38,7 @@ export default function RootLayout({ children }) {
         <main className="flex-1">{children}</main>
         <ChromeGate>
           <Footer />
+          <FloatingActions />
         </ChromeGate>
       </body>
     </html>

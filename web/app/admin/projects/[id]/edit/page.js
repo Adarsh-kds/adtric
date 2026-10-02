@@ -13,7 +13,7 @@ export default function EditProject() {
   useEffect(() => {
     adminFetch(`/projects/${id}`).then((result) => {
       if (result.ok) setProject(result.body.data);
-      else setError(result.body.message || "Could not load the project");
+      else setError(result.body.message || "Could not load the property");
     });
   }, [id]);
 
@@ -22,8 +22,11 @@ export default function EditProject() {
 
   return (
     <>
-      <h1 className="heading mb-10 text-[36px]">Edit project</h1>
-      <ProjectForm project={project} />
+      <h1 className="heading text-[30px]">Edit property</h1>
+      <p className="mb-6 mt-1 text-[14px] text-muted">{project.name}</p>
+      <div className="admin-panel p-5 md:p-8">
+        <ProjectForm project={project} />
+      </div>
     </>
   );
 }

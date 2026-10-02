@@ -15,6 +15,7 @@ const {
   listEnquiries,
   updateEnquiryStatus,
   retryCrm,
+  deleteEnquiry,
 } = require("../controllers/adminEnquiryController");
 
 const router = express.Router();
@@ -33,5 +34,6 @@ router.delete("/projects/:id", deleteProject);
 router.get("/enquiries", listEnquiries);
 router.patch("/enquiries/:id/status", updateEnquiryStatus);
 router.post("/enquiries/:id/retry-crm", retryCrm);
+router.delete("/enquiries/:id", deleteEnquiry);
 
 module.exports = router;

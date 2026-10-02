@@ -62,7 +62,9 @@ export default function ProjectForm({ project }) {
   const [coverPreview, setCoverPreview] = useState("");
   const [newGallery, setNewGallery] = useState([]);
   const [galleryPreviews, setGalleryPreviews] = useState([]);
-  const [gallery, setGallery] = useState(project ? project.gallery : []);
+  const [gallery] = useState(project ? project.gallery : []);
+  const [removed, setRemoved] = useState([]);
+  const keptSaved = gallery.filter((image) => !removed.includes(image));
   const [errors, setErrors] = useState({});
   const [notice, setNotice] = useState("");
   const [loading, setLoading] = useState(false);
@@ -99,33 +101,32 @@ export default function ProjectForm({ project }) {
     setCover(file);
   };
 
+  // Nothing is sent to the server until Save is pressed.
   const pickGallery = (event) => {
     const files = Array.from(event.target.files);
+    event.target.value = "";
+    if (files.length === 0) return;
     const problem = checkFiles(files, "Gallery");
     if (problem) {
       setErrors((old) => ({ ...old, gallery: problem }));
-      event.target.value = "";
       return;
     }
-    if (files.length + gallery.length > 6) {
-      setErrors((old) => ({ ...old, gallery: "A project can have at most 6 gallery images" }));
-      event.target.value = "";
+    if (files.length + newGallery.length + keptSaved.length > 6) {
+      setErrors((old) => ({ ...old, gallery: "A property can have at most 6 gallery images" }));
       return;
     }
     setErrors((old) => ({ ...old, gallery: undefined }));
-    setNewGallery(files);
+    setNewGallery((old) => [...old, ...files]);
   };
 
-  const removeSaved = async (image) => {
-    const result = await adminFetch(`/projects/${project._id}/gallery`, {
-      method: "DELETE",
-      json: { image },
-    });
-    if (result.ok) {
-      setGallery(result.body.data.gallery);
-    } else {
-      setNotice(result.body.message || "Could not remove the image");
-    }
+  const removeSaved = (image) => {
+    setRemoved((old) => [...old, image]);
+    setErrors((old) => ({ ...old, gallery: undefined }));
+  };
+
+  const dropNew = (index) => {
+    setNewGallery((old) => old.filter((_, position) => position !== index));
+    setErrors((old) => ({ ...old, gallery: undefined }));
   };
 
   const validate = () => {
@@ -155,6 +156,7 @@ export default function ProjectForm({ project }) {
     Object.entries(values).forEach(([key, value]) => data.append(key, String(value)));
     if (cover) data.append("coverImage", cover);
     newGallery.forEach((file) => data.append("gallery", file));
+    if (removed.length > 0) data.append("removeGallery", JSON.stringify(removed));
 
     setLoading(true);
     const result = await adminFetch(isEdit ? `/projects/${project._id}` : "/projects", {
@@ -165,7 +167,7 @@ export default function ProjectForm({ project }) {
 
     if (!result.ok) {
       setErrors(result.body.errors || {});
-      setNotice(result.body.message || "Could not save the project");
+      setNotice(result.body.message || "Could not save the property");
       return;
     }
     router.push("/admin/projects");
@@ -186,7 +188,7 @@ export default function ProjectForm({ project }) {
 
   return (
     <form onSubmit={submit} noValidate className="grid gap-8 md:grid-cols-2">
-      {textInput("name", "Project name")}
+      {textInput("name", "Property name")}
       {textInput("location", "Location (city)")}
       <Field label="Property type" error={errors.propertyType}>
         <select name="propertyType" value={values.propertyType} onChange={change} className="field-input">
@@ -238,6 +240,7 @@ export default function ProjectForm({ project }) {
         <Field label={isEdit ? "Replace cover image (optional)" : "Cover image"} error={errors.coverImage}>
           <input type="file" accept="image/jpeg,image/png,image/webp" onChange={pickCover} className="mt-3 block w-full text-[13px] text-muted file:mr-4 file:cursor-pointer file:border-0 file:bg-button file:px-4 file:py-2 file:text-fg" />
         </Field>
+        {cover && <p className="mt-3 text-[13px] text-muted">This image replaces the current cover when you save.</p>}
         {(coverPreview || (isEdit && project.coverImage)) && (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={coverPreview || project.coverImage} alt="Cover preview" className="mt-4 aspect-[4/3] w-full max-w-[320px] object-cover" />
@@ -249,7 +252,7 @@ export default function ProjectForm({ project }) {
           <input type="file" multiple accept="image/jpeg,image/png,image/webp" onChange={pickGallery} className="mt-3 block w-full text-[13px] text-muted file:mr-4 file:cursor-pointer file:border-0 file:bg-button file:px-4 file:py-2 file:text-fg" />
         </Field>
         <div className="mt-4 flex flex-wrap gap-3">
-          {gallery.map((image) => (
+          {keptSaved.map((image) => (
             <div key={image} className="relative">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={image} alt="Gallery" className="h-20 w-28 object-cover" />
@@ -263,12 +266,34 @@ export default function ProjectForm({ project }) {
               </button>
             </div>
           ))}
-          {galleryPreviews.map((url) => (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img key={url} src={url} alt="New gallery" className="h-20 w-28 object-cover opacity-80 ring-1 ring-white/40" />
+          {galleryPreviews.map((url, index) => (
+            <div key={url} className="relative">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={url} alt="New gallery" className="h-20 w-28 object-cover ring-2 ring-fg/60" />
+              <span className="absolute bottom-1 left-1 bg-black/75 px-1.5 py-0.5 text-[10px] uppercase tracking-[0.1em] text-white">New</span>
+              <button
+                type="button"
+                onClick={() => dropNew(index)}
+                aria-label="Remove new image"
+                className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center bg-black/75 text-[14px] text-white hover:bg-black"
+              >
+                ×
+              </button>
+            </div>
           ))}
         </div>
-        {newGallery.length > 0 && <p className="mt-2 text-[12px] text-muted">New images are uploaded when you save.</p>}
+        {(newGallery.length > 0 || removed.length > 0) && (
+          <p className="mt-3 text-[13px] text-muted">
+            {newGallery.length > 0 && `${newGallery.length} new ${newGallery.length === 1 ? "image" : "images"} will be added. `}
+            {removed.length > 0 && `${removed.length} ${removed.length === 1 ? "image" : "images"} will be removed. `}
+            Changes apply when you save.
+            {removed.length > 0 && (
+              <button type="button" onClick={() => setRemoved([])} className="ml-2 underline">
+                Undo removals
+              </button>
+            )}
+          </p>
+        )}
       </div>
 
       {notice && (
@@ -279,7 +304,7 @@ export default function ProjectForm({ project }) {
 
       <div className="flex gap-4 md:col-span-2">
         <button type="submit" disabled={loading} className="btn btn-white">
-          {loading ? "Saving..." : isEdit ? "Save changes" : "Create project"}
+          {loading ? "Saving..." : isEdit ? "Save changes" : "Create property"}
         </button>
         <button type="button" onClick={() => router.push("/admin/projects")} className="btn btn-gray">
           Cancel

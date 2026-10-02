@@ -4,6 +4,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import EnquirySection from "@/components/EnquirySection";
 import Gallery from "@/components/Gallery";
+import MobileEnquireBar from "@/components/MobileEnquireBar";
+import Reveal from "@/components/Reveal";
 import { getProjectBySlug, getProjectOptions } from "@/lib/api";
 import { formatPrice } from "@/lib/format";
 
@@ -88,7 +90,7 @@ export default async function ProjectDetailPage({ params }) {
               {project.shortDescription}
             </p>
 
-            <dl className="mt-12 border-t border-line/60">
+            <Reveal as="div" className="mt-12"><dl className="border-t border-line/60">
               {details.map((item) => (
                 <div
                   key={item.label}
@@ -101,11 +103,11 @@ export default async function ProjectDetailPage({ params }) {
             </dl>
             <p className="mt-4 text-[13px] text-muted">
               * Starting price is indicative and subject to change.
-            </p>
+            </p></Reveal>
           </div>
 
           <aside className="lg:sticky lg:top-28 lg:self-start">
-            <div className="bg-surface p-8">
+            <div className="glass p-8">
               <p className="eyebrow">Starting from</p>
               <p className="heading mt-3 text-5xl">{formatPrice(project.startingPrice)}*</p>
               <p className="mt-3 text-[14px] text-muted">{project.configuration}</p>
@@ -122,15 +124,16 @@ export default async function ProjectDetailPage({ params }) {
         </div>
 
         {project.gallery.length > 0 && (
-          <section className="mt-20">
+          <Reveal as="section" className="mt-20">
             <h2 className="heading text-4xl lg:text-5xl">Gallery</h2>
             <div className="mt-8">
               <Gallery images={project.gallery} name={project.name} />
             </div>
-          </section>
+          </Reveal>
         )}
       </article>
 
+      <MobileEnquireBar price={`${formatPrice(project.startingPrice)}*`} name={project.name} />
       <EnquirySection
         projects={projectOptions}
         defaultProjectId={project._id}

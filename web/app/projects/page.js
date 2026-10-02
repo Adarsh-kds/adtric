@@ -1,6 +1,7 @@
 import Link from "next/link";
 import EnquirySection from "@/components/EnquirySection";
 import Pagination from "@/components/Pagination";
+import Reveal from "@/components/Reveal";
 import ProjectCard from "@/components/ProjectCard";
 import ProjectFilters from "@/components/ProjectFilters";
 import { getLocations, getProjectOptions, getProjects } from "@/lib/api";
@@ -36,9 +37,9 @@ export default async function ProjectsPage({ searchParams }) {
   return (
     <>
       <section className="mx-auto w-full max-w-[1400px] px-5 pb-20 pt-16 sm:px-8 lg:px-10 lg:pb-28 lg:pt-24">
-        <p className="eyebrow">Projects</p>
+        <p className="eyebrow rise">Projects</p>
         <div className="mt-4 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <h1 className="heading text-[44px] sm:text-6xl lg:text-[72px]">All projects</h1>
+          <h1 className="heading rise text-[44px] sm:text-6xl lg:text-[72px]">All projects</h1>
           <p className="text-[14px] text-muted">
             {result.total} {result.total === 1 ? "project" : "projects"} found
           </p>
@@ -50,8 +51,10 @@ export default async function ProjectsPage({ searchParams }) {
 
         {result.data.length > 0 ? (
           <div className="mt-14 grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
-            {result.data.map((project) => (
-              <ProjectCard key={project._id} project={project} />
+            {result.data.map((project, index) => (
+              <Reveal key={project._id} delay={(index % 3) * 100}>
+                <ProjectCard project={project} priority={index < 3} />
+              </Reveal>
             ))}
           </div>
         ) : (

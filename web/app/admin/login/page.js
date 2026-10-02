@@ -29,14 +29,14 @@ export default function AdminLogin() {
       setError(result.body.message || "Login failed");
       return;
     }
-    setToken(result.body.data.token);
+    setToken(result.body.data.token, result.body.data.email);
     router.replace("/admin/projects");
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center px-5">
       <form onSubmit={submit} noValidate className="w-full max-w-[420px] bg-surface p-8 shadow-sm md:p-10">
-        <p className="eyebrow">ADTRIC Admin</p>
+        <p className="eyebrow">ADTRIC Super Admin</p>
         <h1 className="heading mt-3 text-[34px]">Sign in</h1>
 
         <div className="mt-8">

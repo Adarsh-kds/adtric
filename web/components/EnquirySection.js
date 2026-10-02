@@ -1,5 +1,6 @@
 import ArrowIcon from "@/components/ArrowIcon";
 import EnquiryForm from "@/components/EnquiryForm";
+import Reveal from "@/components/Reveal";
 import { SITE } from "@/lib/site";
 
 export default function EnquirySection({
@@ -17,7 +18,7 @@ export default function EnquirySection({
   return (
     <section id="enquiry" className="bg-surface">
       <div className="mx-auto grid w-full max-w-[1400px] gap-14 px-5 py-20 sm:px-8 lg:grid-cols-2 lg:gap-24 lg:px-10 lg:py-28">
-        <div>
+        <Reveal>
           <h2 className="heading text-[40px] sm:text-5xl lg:text-[56px]">{title}</h2>
           <p className="mt-6 max-w-md text-[15px] leading-relaxed text-white/90">{intro}</p>
 
@@ -38,11 +39,13 @@ export default function EnquirySection({
               </li>
             ))}
           </ul>
-        </div>
+        </Reveal>
 
-        <div id="enquiry-form" className="lg:pt-2">
-          <EnquiryForm projects={projects} defaultProjectId={defaultProjectId} />
-        </div>
+        <Reveal delay={120}>
+          <div id="enquiry-form" className="lg:pt-2">
+            <EnquiryForm projects={projects} defaultProjectId={defaultProjectId} />
+          </div>
+        </Reveal>
       </div>
     </section>
   );

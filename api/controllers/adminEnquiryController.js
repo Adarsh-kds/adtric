@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const Enquiry = require("../models/Enquiry");
 const sendToCrm = require("../utils/sendToCrm");
 
+const STATUSES = ["New", "Contacted", "Site Visit Done", "Closed"];
+
 const listEnquiries = async (req, res, next) => {
   try {
     const page = Math.max(parseInt(req.query.page) || 1, 1);
@@ -10,6 +12,19 @@ const listEnquiries = async (req, res, next) => {
     const filter = {};
     if (mongoose.isValidObjectId(req.query.project)) {
       filter.project = req.query.project;
+    }
+    if (STATUSES.includes(req.query.status)) {
+      filter.status = req.query.status;
+    }
+
+    // Date range on the received time. Accepts ISO date-times.
+    const from = new Date(req.query.from);
+    const to = new Date(req.query.to);
+    if (req.query.from && !Number.isNaN(from.getTime())) {
+      filter.createdAt = { ...filter.createdAt, $gte: from };
+    }
+    if (req.query.to && !Number.isNaN(to.getTime())) {
+      filter.createdAt = { ...filter.createdAt, $lte: to };
     }
 
     const total = await Enquiry.countDocuments(filter);
@@ -94,4 +109,25 @@ const retryCrm = async (req, res, next) => {
   }
 };
 
-module.exports = { listEnquiries, updateEnquiryStatus, retryCrm };
+const deleteEnquiry = async (req, res, next) => {
+  try {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Enquiry not found" });
+    }
+
+    const enquiry = await Enquiry.findByIdAndDelete(req.params.id);
+    if (!enquiry) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Enquiry not found" });
+    }
+
+    res.status(200).json({ success: true, message: "Enquiry deleted" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { listEnquiries, updateEnquiryStatus, retryCrm, deleteEnquiry };
